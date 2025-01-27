@@ -5,6 +5,7 @@
 //  Created by lujin mohammed on 20/07/1446 AH.
 //
 
+
 import SwiftUI
 
 struct SecondView: View {
@@ -25,29 +26,19 @@ struct SecondView: View {
                 VStack(alignment: .leading, spacing: 16) {
                     highRatedSection
 
-                    sectionHeader(title: "Drama") {
-                        print("Show more Drama")
-                    }
+                    sectionHeader(title: "Drama", genre: "Drama")
                     horizontalScrollContent(for: "Drama")
-
-                    sectionHeader(title: "Comedy") {
-                        print("Show more Comedy")
-                    }
-                    horizontalScrollContent(for: "Comedy")
-
-                    sectionHeader(title: "Action") {
-                        print("Show more Action")
-                    }
+                    
+//                    sectionHeader(title: "Comedy", genre: "comedy")
+//                    horizontalScrollContent(for: "Comedy")
+                    
+                    sectionHeader(title: "Action", genre: "Action")
                     horizontalScrollContent(for: "Action")
 
-                    sectionHeader(title: "Thriller") {
-                        print("Show more Thriller")
-                    }
+                    sectionHeader(title: "Thriller", genre: "Thriller")
                     horizontalScrollContent(for: "Thriller")
 
-                    sectionHeader(title: "Crime") {
-                        print("Show more Crime")
-                    }
+                    sectionHeader(title: "Crime", genre: "Crime")
                     horizontalScrollContent(for: "Crime")
                 }
                 .padding(.horizontal)
@@ -124,13 +115,13 @@ struct SecondView: View {
     }
 
     // MARK: - Section Header
-    private func sectionHeader(title: String, action: @escaping () -> Void) -> some View {
+    private func sectionHeader(title: String, genre: String) -> some View {
         HStack {
             Text(title)
                 .font(.system(size: 22))
                 .bold()
             Spacer()
-            Button(action: action) {
+            NavigationLink(destination: GenreMoviesView(genre: genre)) {
                 Text("Show more")
                     .font(.system(size: 14))
                     .bold()
@@ -196,9 +187,7 @@ struct SecondView: View {
                      .prefix(7)
                      .map { $0 }
     }
-}
-
-// MARK: - Data Models
+}// MARK: - Data Models
 struct AirtableMovieResponse: Codable {
     let records: [AirtableMovie]
 }
