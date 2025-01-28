@@ -99,9 +99,10 @@ struct EditProfileView: View {
                 Button(action: {
                     UserDefaults.standard.removeObject(forKey: "userId")
                     UserDefaults.standard.removeObject(forKey: "userProfileImage") // حذف الصورة المحفوظة
+                    email = ""
+                    pass = ""
                     isLoggedIn = false
-                    email = "" // إعادة تعيين البريد الإلكتروني
-                    pass = "" // إعادة تعيين كلمة المرور
+                    
                     presentationMode.wrappedValue.dismiss()
                 }) {
                     Text("Sign Out")
@@ -112,6 +113,7 @@ struct EditProfileView: View {
                         .cornerRadius(8)
                 }
                 .padding(.bottom, 20)
+                
             }
             .navigationTitle(isEditing ? "Edit Profile" : "Profile Info")
             .navigationBarTitleDisplayMode(.inline)

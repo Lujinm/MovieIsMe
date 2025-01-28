@@ -9,8 +9,8 @@ import SwiftUI
 struct ContentView: View {
     @FocusState private var isEmailFocused: Bool
     @FocusState private var isPasswordFocused: Bool
-    @State private var email: String = ""
-    @State private var pass: String = ""
+    @State  var email: String = ""
+    @State  var pass: String = ""
     @State private var errorMessage: String? = nil
     @State private var isLoading: Bool = false
     @State private var isLoggedIn: Bool = false
@@ -101,8 +101,7 @@ struct ContentView: View {
                         Text(errorMessage)
                             .font(.system(size: 18))
                             .foregroundColor(.red)
-                            .padding(.leading, -175)
-                            .padding(.top, 40)
+                            .padding(.top, -25)
                     }
 
                     Button(action: {

@@ -9,7 +9,7 @@
 import SwiftUI
 
 struct SecondView: View {
-    @State private var searchText: String = ""
+    @State var searchText: String = ""
     @State private var currentPage = 0
     @State private var movies: [AirtableMovie] = []
     @State private var isLoading: Bool = false
@@ -24,22 +24,45 @@ struct SecondView: View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 16) {
-                    highRatedSection
-
-                    sectionHeader(title: "Drama", genre: "Drama")
-                    horizontalScrollContent(for: "Drama")
-                    
-//                    sectionHeader(title: "Comedy", genre: "comedy")
-//                    horizontalScrollContent(for: "Comedy")
-                    
-                    sectionHeader(title: "Action", genre: "Action")
-                    horizontalScrollContent(for: "Action")
-
-                    sectionHeader(title: "Thriller", genre: "Thriller")
-                    horizontalScrollContent(for: "Thriller")
-
-                    sectionHeader(title: "Crime", genre: "Crime")
-                    horizontalScrollContent(for: "Crime")
+                    if searchText.isEmpty {
+                        highRatedSection
+                        
+                        sectionHeader(title: "Drama", genre: "Drama")
+                        horizontalScrollContent(for: "Drama")
+                        
+                        sectionHeader(title: "Comedy", genre: "Comedy")
+                        horizontalScrollContent(for: "Comedy")
+                        
+                        sectionHeader(title: "Action", genre: "Action")
+                        horizontalScrollContent(for: "Action")
+                        
+                        sectionHeader(title: "Thriller", genre: "Thriller")
+                        horizontalScrollContent(for: "Thriller")
+                        
+                        sectionHeader(title: "Crime", genre: "Crime")
+                        horizontalScrollContent(for: "Crime")
+                    } else {
+                        // عرض نتائج البحث
+                        let filteredMovies = filterMovies(searchText)
+                        if filteredMovies.isEmpty {
+                            Text("No results found for '\(searchText)'")
+                                .foregroundColor(.white)
+                                .padding()
+                        } else {
+                            ForEach(filteredMovies, id: \.id) { movie in
+                                NavigationLink(destination: DetailsView(movie: movie)) {
+                                    AsyncImage(url: URL(string: movie.fields.poster)) { image in
+                                        image.resizable()
+                                            .scaledToFill()
+                                    } placeholder: {
+                                        ProgressView()
+                                    }
+                                    .frame(width: 150, height: 225)
+                                    .cornerRadius(10)
+                                }
+                            }
+                        }
+                    }
                 }
                 .padding(.horizontal)
                 .navigationTitle("Movies Center")
@@ -187,7 +210,22 @@ struct SecondView: View {
                      .prefix(7)
                      .map { $0 }
     }
-}// MARK: - Data Models
+
+    // MARK: - Filter Movies for Search
+    private func filterMovies(_ searchText: String) -> [AirtableMovie] {
+        if searchText.isEmpty {
+            return movies
+        } else {
+            return movies.filter { movie in
+                movie.fields.name.localizedCaseInsensitiveContains(searchText) ||
+                movie.fields.story.localizedCaseInsensitiveContains(searchText) ||
+                movie.fields.genre.contains { $0.localizedCaseInsensitiveContains(searchText) }
+            }
+        }
+    }
+}
+
+// MARK: - Data Models
 struct AirtableMovieResponse: Codable {
     let records: [AirtableMovie]
 }

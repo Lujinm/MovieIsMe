@@ -11,6 +11,7 @@ struct DetailsView: View {
     @State private var isBookmarked: Bool = false
     @State private var directors: [Director] = []
     @State private var actors: [Actor] = []
+    @State private var reviews: [Review] = []
     @State private var isLoading: Bool = false
     @State private var errorMessage: String? = nil
 
@@ -131,6 +132,43 @@ struct DetailsView: View {
                         .font(.caption)
                         .foregroundColor(.gray)
                 }
+
+                // Divider
+                Divider()
+                    .padding(.vertical)
+
+                // Reviews Section
+                Text("Rating & Reviews")
+                    .font(.title2)
+                    .bold()
+
+                if !reviews.isEmpty {
+                    VStack(alignment: .leading, spacing: 16) {
+                        // Average Rating
+                        Text("\(String(format: "%.1f", calculateAverageRating()))")
+                            .font(.system(size: 48, weight: .bold))
+                            .foregroundColor(.primary)
+                        
+                        Text("Out of 5")
+                            .font(.headline)
+                            .foregroundColor(.gray)
+                        
+                        // Horizontal Scroll for Reviews
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack(spacing: 16) {
+                                ForEach(reviews, id: \.id) { review in
+                                    ReviewRow(review: review)
+                                        .frame(width: 300) // Adjust width as needed
+                                }
+                            }
+                            .padding(.horizontal)
+                        }
+                    }
+                } else {
+                    Text("No reviews found.")
+                        .font(.caption)
+                        .foregroundColor(.gray)
+                }
             }
             .padding()
         }
@@ -157,6 +195,7 @@ struct DetailsView: View {
         .onAppear {
             checkIfBookmarked()
             fetchDirectorsAndActors()
+            fetchReviews()
         }
     }
 
@@ -190,6 +229,14 @@ struct DetailsView: View {
             isLoading = true
             directors = await fetchDirectors() ?? []
             actors = await fetchActors() ?? []
+            isLoading = false
+        }
+    }
+
+    private func fetchReviews() {
+        Task {
+            isLoading = true
+            reviews = await fetchMovieReviews() ?? []
             isLoading = false
         }
     }
@@ -235,8 +282,97 @@ struct DetailsView: View {
             return nil
         }
     }
+
+    private func fetchMovieReviews() async -> [Review]? {
+        let url = URL(string: "https://api.airtable.com/v0/appsfcB6YESLj4NCN/reviews")!
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.addValue(token, forHTTPHeaderField: "Authorization")
+
+        do {
+            let (data, response) = try await URLSession.shared.data(for: request)
+            if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 {
+                let reviewsResponse = try JSONDecoder().decode(ReviewResponse.self, from: data)
+                return reviewsResponse.records
+            } else {
+                print("Error: \(response)")
+                return nil
+            }
+        } catch {
+            print("Error fetching reviews: \(error)")
+            return nil
+        }
+    }
+
+    private func calculateAverageRating() -> Double {
+        guard !reviews.isEmpty else { return 0.0 }
+        let totalRating = reviews.reduce(0) { $0 + $1.fields.rate }
+        return totalRating / Double(reviews.count)
+    }
 }
 
+// MARK: - Review Row View
+struct ReviewRow: View {
+    let review: Review
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack {
+                // User Image
+                AsyncImage(url: URL(string: review.user?.fields.profile_image ?? "")) { image in
+                    image.resizable()
+                        .scaledToFill()
+                } placeholder: {
+                    ProgressView()
+                }
+                .frame(width: 40, height: 40)
+                .clipShape(Circle())
+                
+                // User Name and Rating
+                VStack(alignment: .leading, spacing: 4) {
+                    
+                    Text(review.user?.fields.name ?? "Unknown User")
+                        .font(.headline)
+                    HStack {
+                        ForEach(0..<Int(review.fields.rate), id: \.self) { _ in
+                            Image(systemName: "star.fill")
+                                .foregroundColor(.yellow)
+                        }
+                    }
+                }
+                
+                Spacer()
+            }
+
+            // Review Text
+            Text(review.fields.review_text)
+                .font(.body)
+                .foregroundColor(.primary)
+                .lineLimit(3) // Limit text to 3 lines
+            
+            if let createdTime = review.createdTime {
+                Text(formatDate(createdTime))
+                    .font(.caption)
+                    .foregroundColor(.gray)
+            }
+        }
+        .padding()
+        .frame(width: 305, height: 188) // Set fixed width and height
+        .background(Color(.systemGray6))
+        .cornerRadius(10)
+    }
+
+    // Helper function to format date
+    private func formatDate(_ dateString: String) -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ" // Adjust this format to match your API response
+        if let date = dateFormatter.date(from: dateString) {
+            dateFormatter.dateFormat = "MMMM d, yyyy" // Desired output format
+            return dateFormatter.string(from: date)
+        }
+        return dateString
+    }
+}
 // MARK: - Data Models
 struct AirtableMovieResponse2: Codable {
     let records: [AirtableMovie]
@@ -284,6 +420,38 @@ struct Actor: Codable, Identifiable {
 struct ActorFields: Codable {
     let name: String
     let image: String
+}
+
+struct ReviewResponse: Codable {
+    let records: [Review]
+}
+
+struct Review: Codable, Identifiable {
+    let id: String
+    let createdTime: String?
+    let fields: ReviewFields
+    let user: User?
+}
+
+struct ReviewFields: Codable {
+    let rate: Double
+    let review_text: String
+    let movie_id: String
+    let user_id: String
+}
+
+struct UserResponse: Codable {
+    let records: [User]
+}
+
+struct User: Codable, Identifiable {
+    let id: String
+    let fields: UserFields
+}
+
+struct UserFields: Codable {
+    let profile_image: String
+    let name: String
 }
 
 #Preview {
