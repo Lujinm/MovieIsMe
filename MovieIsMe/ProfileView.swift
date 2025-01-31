@@ -20,8 +20,8 @@ struct ProfileView: View {
     @State private var bookmarkedMovies: [AirtableMovie] = []
     @Binding var isLoggedIn: Bool
     @State private var profileImage: UIImage? = nil
-       @Binding var email: String
-       @Binding var pass: String
+    @Binding var email: String
+    @Binding var pass: String
 
     let token = "Bearer pat7E88yW3dgzlY61.2b7d03863aca9f1262dcb772f7728bd157e695799b43c7392d5faf4f52fcb001"
 
@@ -31,32 +31,35 @@ struct ProfileView: View {
                 VStack {
                     if let user = user {
                         NavigationLink(destination: EditProfileView(user: user, isLoggedIn: $isLoggedIn, email: .constant(""), pass: .constant(""))) {
-                            VStack {
-                                // عرض الصورة المحفوظة أو الصورة الافتراضية
+                            HStack {
+                                
                                 if let savedImageData = UserDefaults.standard.data(forKey: "userProfileImage"),
                                    let savedImage = UIImage(data: savedImageData) {
                                     Image(uiImage: savedImage)
                                         .resizable()
                                         .scaledToFill()
-                                        .frame(width: 100, height: 100)
+                                        .frame(width: 56, height: 56)
                                         .clipShape(Circle())
                                 } else {
                                     Image(systemName: "person.circle.fill")
                                         .resizable()
                                         .scaledToFill()
-                                        .frame(width: 100, height: 100)
+                                        .frame(width: 56, height: 56)
                                         .foregroundColor(.gray)
                                 }
-
-                                Text(user.fields.name)
-                                    .font(.title)
-                                    .foregroundColor(.white)
-
-                                Text(user.fields.email)
-                                    .font(.subheadline)
-                                    .foregroundColor(.gray)
+                                VStack{
+                                    
+                                    Text(user.fields.name)
+                                        .font(.system(size: 18))
+                                        .foregroundColor(.white)
+                                    
+                                    Text(user.fields.email)
+                                        .font(.system(size: 12))
+                                        .foregroundColor(.gray)
+                                }.padding(.trailing,160)
                             }
                             .padding()
+                            .frame(width: 358, height: 80)
                             .background(Color.gray.opacity(0.2))
                             .cornerRadius(10)
                             .padding(.top, 40)
@@ -69,34 +72,59 @@ struct ProfileView: View {
                             .foregroundColor(.red)
                             .padding(.top, 40)
                     }
-
+                    
                     Text("Saved Movies")
-                        .foregroundColor(.white)
-                        .padding(.top, 20)
-
-                    LazyVGrid(columns: columns, spacing: 16) {
-                        ForEach(bookmarkedMovies, id: \.id) { movie in
-                            NavigationLink(destination: DetailsView(movie: movie)) {
-                                AsyncImage(url: URL(string: movie.fields.poster)) { image in
-                                    image.resizable()
-                                        .scaledToFill()
-                                } placeholder: {
-                                    ProgressView()
+                        .font(.system(size: 22))
+                        .bold()
+                        .padding(.top, 30)
+                        .padding(.trailing, 240)
+                    
+                    if bookmarkedMovies.isEmpty {
+                        Image("backgrondempty")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 300, height: 400)
+                            .padding(.top, 20)
+                    } else {
+                        LazyVGrid(columns: columns, spacing: 16) {
+                            ForEach(bookmarkedMovies, id: \.id) { movie in
+                                NavigationLink(destination: DetailsView(movie: movie)) {
+                                    AsyncImage(url: URL(string: movie.fields.poster)) { image in
+                                        image.resizable()
+                                            .scaledToFill()
+                                    } placeholder: {
+                                        ProgressView()
+                                    }
+                                    .frame(width: 172, height: 237)
+                                    .cornerRadius(8)
                                 }
-                                .frame(width: 172, height: 237)
-                                .cornerRadius(8)
                             }
                         }
+                        .padding(.horizontal)
                     }
-                    .padding(.horizontal)
                 }
             }
             .navigationTitle("Profile")
-            .navigationBarBackButtonHidden(false)
+            .navigationBarBackButtonHidden(true) // إخفاء السهم القديم
             .foregroundColor(.white)
             .onAppear {
                 fetchUserData()
                 fetchBookmarkedMovies()
+            }
+            .toolbar {
+                // تخصيص زر العودة
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button(action: {
+                        // الرجوع
+                    }) {
+                        HStack{
+                            Image(systemName: "chevron.left") // السهم الافتراضي
+                                .foregroundColor(.yellow) // تغيير اللون إلى أصفر
+                            Text("Back")
+                                .foregroundColor(.yellow)
+                        }
+                        }
+                }
             }
         }
     }
@@ -154,6 +182,5 @@ struct ProfileView: View {
 }
 
 #Preview {
-    ProfileView(isLoggedIn: .constant(true), email: .constant("example@example.com"), pass: .constant("password123"))
+    ProfileView(isLoggedIn: .constant(true), email: .constant("kaia@oconnor.com"), pass: .constant("kaia@oconnor.com"))
 }
-

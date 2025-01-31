@@ -18,6 +18,8 @@ struct SecondView: View {
     @Binding var email: String
     @Binding var pass: String
 
+    @State private var profileImage: UIImage? = nil
+
     let token = "Bearer pat7E88yW3dgzlY61.2b7d03863aca9f1262dcb772f7728bd157e695799b43c7392d5faf4f52fcb001"
 
     var body: some View {
@@ -42,25 +44,35 @@ struct SecondView: View {
                         sectionHeader(title: "Crime", genre: "Crime")
                         horizontalScrollContent(for: "Crime")
                     } else {
-                        // عرض نتائج البحث
                         let filteredMovies = filterMovies(searchText)
                         if filteredMovies.isEmpty {
                             Text("No results found for '\(searchText)'")
                                 .foregroundColor(.white)
                                 .padding()
                         } else {
-                            ForEach(filteredMovies, id: \.id) { movie in
-                                NavigationLink(destination: DetailsView(movie: movie)) {
-                                    AsyncImage(url: URL(string: movie.fields.poster)) { image in
-                                        image.resizable()
-                                            .scaledToFill()
-                                    } placeholder: {
-                                        ProgressView()
+                            LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 16), count: 2), spacing: 16) {
+                                ForEach(filteredMovies, id: \.id) { movie in
+                                    NavigationLink(destination: DetailsView(movie: movie)) {
+                                        VStack {
+                                            AsyncImage(url: URL(string: movie.fields.poster)) { image in
+                                                image.resizable()
+                                                    .scaledToFill()
+                                            } placeholder: {
+                                                ProgressView()
+                                            }
+                                            .frame(width: 150, height: 225)
+                                            .cornerRadius(10)
+
+                                            Text(movie.fields.name)
+                                                .font(.caption)
+                                                .foregroundColor(.white)
+                                                .multilineTextAlignment(.center)
+                                        }
                                     }
-                                    .frame(width: 150, height: 225)
-                                    .cornerRadius(10)
                                 }
                             }
+                            .padding(.horizontal)
+
                         }
                     }
                 }
@@ -71,10 +83,22 @@ struct SecondView: View {
                 .toolbar {
                     ToolbarItem(placement: .topBarTrailing) {
                         NavigationLink(destination: ProfileView(isLoggedIn: $isLoggedIn, email: $email, pass: $pass)) {
-                            Image(systemName: "person.circle")
-                                .frame(width: 40, height: 30)
-                                .background(.gray.opacity(0.3))
-                                .clipShape(Circle())
+                            if let profileImage = profileImage {
+                                Image(uiImage: profileImage)
+                                    .resizable()
+                                    .scaledToFill()
+                                    .frame(width: 40, height: 40)
+                                    .clipShape(Circle())
+                                    .overlay(
+                                        Circle()
+                                            .stroke(Color.gray.opacity(0.6), lineWidth: 2)
+                                    )
+                            } else {
+                                Image(systemName: "person.circle")
+                                    .frame(width: 40, height: 40)
+                                    .background(.gray.opacity(0.3))
+                                    .clipShape(Circle())
+                            }
                         }
                     }
                 }
@@ -87,6 +111,15 @@ struct SecondView: View {
                 movies = await fetchMovies() ?? []
                 isLoading = false
             }
+            loadProfileImage()
+        }
+    }
+
+    // MARK: - Load Profile Image
+    private func loadProfileImage() {
+        if let savedImageData = UserDefaults.standard.data(forKey: "userProfileImage"),
+           let savedImage = UIImage(data: savedImageData) {
+            profileImage = savedImage
         }
     }
 

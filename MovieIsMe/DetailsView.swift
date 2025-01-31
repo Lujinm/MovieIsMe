@@ -30,40 +30,59 @@ struct DetailsView: View {
                 .frame(height: 400)
                 .cornerRadius(10)
 
-                // Movie Title
+//                 Movie Title
                 Text(movie.fields.name)
                     .font(.largeTitle)
                     .bold()
-
+                HStack {
+                    VStack{
+                        Text("Duration")
+                            .font(.headline)
+                        Text("\(movie.fields.runtime)")
+                            .foregroundColor(.gray)}
+                    Spacer()
+                    VStack{
+                        Text("Language")
+                            .font(.headline)
+                        Text(" \(movie.fields.language.joined(separator: ", "))")
+                        .foregroundColor(.gray)
+                    }
+                }
+                HStack {
+                    VStack{
+                        Text("Genres")
+                            .font(.headline)
+                        Text(" \(movie.fields.genre.joined(separator: ", "))")
+                            .foregroundColor(.gray)
+                    }
+                    Spacer()
+                    VStack{
+                        Text("Age")
+                            .font(.headline)
+                        Text(" \(movie.fields.rating)")
+                        .foregroundColor(.gray)
+                    }
+                }
+                
+                
                 // Movie Story
+                Text("Story")
+                    .font(.headline)
                 Text(movie.fields.story)
-                    .font(.body)
                     .foregroundColor(.gray)
 
-                // Rating and Runtime
-                HStack {
-                    Text("Rating: \(movie.fields.rating)")
-                        .font(.headline)
-                    Spacer()
-                    Text("Runtime: \(movie.fields.runtime)")
-                        .font(.headline)
-                }
+     
 
                 // IMDb Rating
-                Text("IMDb Rating: \(String(format: "%.1f", movie.fields.IMDb_rating))")
-                    .font(.headline)
-
-                // Genres
-                Text("Genres: \(movie.fields.genre.joined(separator: ", "))")
-                    .font(.headline)
-
-                // Languages
-                Text("Languages: \(movie.fields.language.joined(separator: ", "))")
-                    .font(.headline)
-
-                // Divider
+                VStack{
+                    Text("IMDb Rating")
+                        .font(.headline)
+                    Text("\(String(format: "%.1f", movie.fields.IMDb_rating)) /10")
+                    .foregroundColor(.gray)
+                }
                 Divider()
                     .padding(.vertical)
+               
 
                 // Directors Section
                 Text("Director")
@@ -97,9 +116,6 @@ struct DetailsView: View {
                         .foregroundColor(.gray)
                 }
 
-                // Divider
-                Divider()
-                    .padding(.vertical)
 
                 // Actors Section
                 Text("Stars")
@@ -139,26 +155,26 @@ struct DetailsView: View {
 
                 // Reviews Section
                 Text("Rating & Reviews")
-                    .font(.title2)
+                    .font(.system(size: 18))
                     .bold()
 
                 if !reviews.isEmpty {
-                    VStack(alignment: .leading, spacing: 16) {
+                    VStack(alignment: .leading, spacing: 5) {
                         // Average Rating
                         Text("\(String(format: "%.1f", calculateAverageRating()))")
-                            .font(.system(size: 48, weight: .bold))
-                            .foregroundColor(.primary)
-                        
-                        Text("Out of 5")
-                            .font(.headline)
+                            .font(.system(size: 39, weight: .bold))
                             .foregroundColor(.gray)
                         
+                        Text("Out of 5")
+                            .font(.system(size: 15))
+                            .foregroundColor(.gray)
+                           
                         // Horizontal Scroll for Reviews
                         ScrollView(.horizontal, showsIndicators: false) {
                             HStack(spacing: 16) {
                                 ForEach(reviews, id: \.id) { review in
                                     ReviewRow(review: review)
-                                        .frame(width: 300) // Adjust width as needed
+                                        .padding(.top, 25)
                                 }
                             }
                             .padding(.horizontal)
@@ -172,22 +188,43 @@ struct DetailsView: View {
             }
             .padding()
         }
-        .navigationTitle(movie.fields.name)
+//        .navigationTitle(movie.fields.name)
+        .navigationBarBackButtonHidden(true)
         .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                Button(action: {
+                    // تنفيذ العودة للخلف
+                    if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene {
+                        windowScene.windows.first?.rootViewController?.dismiss(animated: true, completion: nil)
+                    }
+                }) {
+                    Image(systemName: "arrow.left")
+                        .foregroundColor(.yellow)
+                        .frame(width: 32, height: 32)
+                        .background(Color.gray.opacity(0.2))
+                        .clipShape(Circle())
+                }
+            }
+            
             ToolbarItem(placement: .navigationBarTrailing) {
                 HStack {
+                    Button(action: {
+                        shareMovie()
+                    }) {
+                        Image(systemName: "square.and.arrow.up")
+                            .foregroundColor(.yellow)
+                            .frame(width: 40, height: 40)
+                            .background(Color.gray.opacity(0.2))
+                            .clipShape(Circle())
+                    }
                     Button(action: {
                         toggleBookmark()
                     }) {
                         Image(systemName: isBookmarked ? "bookmark.fill" : "bookmark")
                             .foregroundColor(.yellow)
-                    }
-
-                    Button(action: {
-                        shareMovie()
-                    }) {
-                        Image(systemName: "square.and.arrow.up")
-                            .foregroundColor(.blue)
+                            .frame(width: 40, height: 40)
+                            .background(Color.gray.opacity(0.2))
+                            .clipShape(Circle())
                     }
                 }
             }
@@ -316,83 +353,70 @@ struct ReviewRow: View {
     let review: Review
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            HStack {
-                // User Image
-                AsyncImage(url: URL(string: review.user?.fields.profile_image ?? "")) { image in
-                    image.resizable()
-                        .scaledToFill()
-                } placeholder: {
-                    ProgressView()
-                }
-                .frame(width: 40, height: 40)
-                .clipShape(Circle())
-                
-                // User Name and Rating
-                VStack(alignment: .leading, spacing: 4) {
+        ZStack(alignment: .topLeading) {
+            VStack(alignment: .leading, spacing: 8) {
+                HStack {
+                    // User Image
+                    AsyncImage(url: URL(string: review.user?.fields.profile_image ?? "")) { image in
+                        image.resizable()
+                            .scaledToFill()
+                    } placeholder: {
+                        ProgressView()
+                    }
+                    .frame(width: 38, height: 38)
+                    .clipShape(Circle())
                     
-                    Text(review.user?.fields.name ?? "Unknown User")
-                        .font(.headline)
-                    HStack {
-                        ForEach(0..<Int(review.fields.rate), id: \.self) { _ in
-                            Image(systemName: "star.fill")
-                                .foregroundColor(.yellow)
+                    // User Name and Rating
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(review.user?.fields.name ?? "Unknown User")
+                            .font(.system(size: 13))
+                            .bold()
+                        HStack {
+                            ForEach(0..<Int(review.fields.rate), id: \.self) { _ in
+                                Image(systemName: "star.fill")
+                                    .frame(width: 2, height: 9)
+                                    .font(.system(size: 7.95))
+                                    .foregroundColor(.yellow)
+                            }
                         }
                     }
                 }
+               
+
+                // Review Text
+                Text(review.fields.review_text)
+                    .font(.system(size: 13))
+                    .foregroundColor(.primary)
+                    .lineLimit(3)
                 
                 Spacer()
+                
+                if let createdTime = review.createdTime {
+                    Text(formatDate(createdTime))
+                        .font(.system(size: 10))
+                        .foregroundColor(.gray)
+                        .padding(.leading, 180)
+                }
             }
-
-            // Review Text
-            Text(review.fields.review_text)
-                .font(.body)
-                .foregroundColor(.primary)
-                .lineLimit(3) // Limit text to 3 lines
-            
-            if let createdTime = review.createdTime {
-                Text(formatDate(createdTime))
-                    .font(.caption)
-                    .foregroundColor(.gray)
-            }
+            .padding()
+            .frame(width: 305, height: 188)
+            .background(Color(.systemGray6))
+            .cornerRadius(8)
         }
-        .padding()
-        .frame(width: 305, height: 188) // Set fixed width and height
-        .background(Color(.systemGray6))
-        .cornerRadius(10)
     }
 
-    // Helper function to format date
     private func formatDate(_ dateString: String) -> String {
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ" // Adjust this format to match your API response
+        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+        
         if let date = dateFormatter.date(from: dateString) {
-            dateFormatter.dateFormat = "MMMM d, yyyy" // Desired output format
+            dateFormatter.dateFormat = "MMMM d, yyyy"
             return dateFormatter.string(from: date)
         }
         return dateString
     }
 }
 // MARK: - Data Models
-struct AirtableMovieResponse2: Codable {
-    let records: [AirtableMovie]
-}
-
-struct AirtableMovie2: Codable, Identifiable {
-    let id: String
-    let fields: AirtableMovieFields
-}
-
-struct AirtableMovieFields2: Codable {
-    let name: String
-    let rating: String
-    let genre: [String]
-    let poster: String
-    let language: [String]
-    let IMDb_rating: Double
-    let runtime: String
-    let story: String
-}
 
 struct DirectorResponse: Codable {
     let records: [Director]

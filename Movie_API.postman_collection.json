@@ -1,0 +1,424 @@
+{
+	"info": {
+		"_postman_id": "955a0bcd-cc20-4546-be84-a0b4efb8854c",
+		"name": "Movie_API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "21277482"
+	},
+	"item": [
+		{
+			"name": "Movies",
+			"item": [
+				{
+					"name": "movies",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "https://api.airtable.com/v0/appsfcB6YESLj4NCN/movies",
+							"protocol": "https",
+							"host": [
+								"api",
+								"airtable",
+								"com"
+							],
+							"path": [
+								"v0",
+								"appsfcB6YESLj4NCN",
+								"movies"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "movie by id",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "https://api.airtable.com/v0/appsfcB6YESLj4NCN/movies",
+							"protocol": "https",
+							"host": [
+								"api",
+								"airtable",
+								"com"
+							],
+							"path": [
+								"v0",
+								"appsfcB6YESLj4NCN",
+								"movies"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Actor",
+			"item": [
+				{
+					"name": "actors",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "https://api.airtable.com/v0/appsfcB6YESLj4NCN/actors",
+							"protocol": "https",
+							"host": [
+								"api",
+								"airtable",
+								"com"
+							],
+							"path": [
+								"v0",
+								"appsfcB6YESLj4NCN",
+								"actors"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "movie’s actors",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "https://api.airtable.com/v0/appsfcB6YESLj4NCN/movie_actors?filterByFormula=movie_id=\"reca1oIIcB4R3HVgw\"",
+							"protocol": "https",
+							"host": [
+								"api",
+								"airtable",
+								"com"
+							],
+							"path": [
+								"v0",
+								"appsfcB6YESLj4NCN",
+								"movie_actors"
+							],
+							"query": [
+								{
+									"key": "filterByFormula",
+									"value": "movie_id=\"reca1oIIcB4R3HVgw\""
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "users",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "https://api.airtable.com/v0/appsfcB6YESLj4NCN/users",
+							"protocol": "https",
+							"host": [
+								"api",
+								"airtable",
+								"com"
+							],
+							"path": [
+								"v0",
+								"appsfcB6YESLj4NCN",
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "user by id",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "https://api.airtable.com/v0/appsfcB6YESLj4NCN/users",
+							"protocol": "https",
+							"host": [
+								"api",
+								"airtable",
+								"com"
+							],
+							"path": [
+								"v0",
+								"appsfcB6YESLj4NCN",
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "user",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"fields\": {\n                \"profile_image\": \"https://source.unsplash.com/200x200/?person\",\n                \"email\": \"sam@oconnor.com\",\n                \"name\": \"Samm Oconnor\",\n                \"password\": \"Sam@oconnor.com\"\n            }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://api.airtable.com/v0/appsfcB6YESLj4NCN/users/recPRxIRAyyvQxfkP",
+							"protocol": "https",
+							"host": [
+								"api",
+								"airtable",
+								"com"
+							],
+							"path": [
+								"v0",
+								"appsfcB6YESLj4NCN",
+								"users",
+								"recPRxIRAyyvQxfkP"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Direcrtors",
+			"item": [
+				{
+					"name": "directors",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "https://api.airtable.com/v0/appsfcB6YESLj4NCN/directors",
+							"protocol": "https",
+							"host": [
+								"api",
+								"airtable",
+								"com"
+							],
+							"path": [
+								"v0",
+								"appsfcB6YESLj4NCN",
+								"directors"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "movie’s directors",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "https://api.airtable.com/v0/appsfcB6YESLj4NCN/movie_directors?filterByFormula=movie_id=\"5c8b046a-3c22-46c7-8472-fcf8707c7af6\"",
+							"protocol": "https",
+							"host": [
+								"api",
+								"airtable",
+								"com"
+							],
+							"path": [
+								"v0",
+								"appsfcB6YESLj4NCN",
+								"movie_directors"
+							],
+							"query": [
+								{
+									"key": "filterByFormula",
+									"value": "movie_id=\"5c8b046a-3c22-46c7-8472-fcf8707c7af6\""
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Reviews",
+			"item": [
+				{
+					"name": "reviews",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "https://api.airtable.com/v0/appsfcB6YESLj4NCN/reviews",
+							"protocol": "https",
+							"host": [
+								"api",
+								"airtable",
+								"com"
+							],
+							"path": [
+								"v0",
+								"appsfcB6YESLj4NCN",
+								"reviews"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "movie’s reviews",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "https://api.airtable.com/v0/appsfcB6YESLj4NCN/reviews?filterByFormula=movie_id=\"reca1oIIcB4R3HVgw\"",
+							"protocol": "https",
+							"host": [
+								"api",
+								"airtable",
+								"com"
+							],
+							"path": [
+								"v0",
+								"appsfcB6YESLj4NCN",
+								"reviews"
+							],
+							"query": [
+								{
+									"key": "filterByFormula",
+									"value": "movie_id=\"reca1oIIcB4R3HVgw\""
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "review",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"fields\": {\n        \"Review Text\": \"The cinematography was breathtaking.\",\n        \"ID\": \"b8dcd23a-1f32-40e9-9125-623456789abc\",\n        \"Created At\": \"2025-01-07\",\n        \"Rate\": 9,\n        \"Movie ID\": \"5c8b046a-4c22-46c7-8472-fcf8707c7af6\",\n        \"User ID\": \"56f8b23a-9f23-40e9-9125-98456789abcd\"\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://api.airtable.com/v0/appsfcB6YESLj4NCN/reviews",
+							"protocol": "https",
+							"host": [
+								"api",
+								"airtable",
+								"com"
+							],
+							"path": [
+								"v0",
+								"appsfcB6YESLj4NCN",
+								"reviews"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "token",
+			"value": "Bearer pat7E88yW3dgzlY61.2b7d03863aca9f1262dcb772f7728bd157e695799b43c7392d5faf4f52fcb001"
+		}
+	]
+}

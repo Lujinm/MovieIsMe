@@ -9,8 +9,8 @@ import SwiftUI
 struct ContentView: View {
     @FocusState private var isEmailFocused: Bool
     @FocusState private var isPasswordFocused: Bool
-    @State  var email: String = ""
-    @State  var pass: String = ""
+    @State var email: String = ""
+    @State var pass: String = ""
     @State private var errorMessage: String? = nil
     @State private var isLoading: Bool = false
     @State private var isLoggedIn: Bool = false
@@ -54,7 +54,7 @@ struct ContentView: View {
                     TextField("Enter your email", text: $email)
                         .padding(12)
                         .frame(width: 358, height: 44)
-                        .background(.gray.opacity(0.3))
+                        .background(Color.gray.opacity(0.2))
                         .cornerRadius(8)
                         .overlay(
                             RoundedRectangle(cornerRadius: 8)
@@ -86,13 +86,13 @@ struct ContentView: View {
                         }
                         .padding(12)
                         .frame(width: 358, height: 44)
-                        .background(.gray.opacity(0.3))
+                        .background(Color.gray.opacity(0.2))
                         .cornerRadius(8)
                         .overlay(
                             RoundedRectangle(cornerRadius: 8)
                                 .stroke(isPasswordFocused ? .red : .clear, lineWidth: 2))
                         .accentColor(.red)
-                        .foregroundColor(.white)
+                        .foregroundColor(pass.isEmpty ? .red : .white)
                         .focused($isPasswordFocused)
                         .padding(.bottom, 30)
                     }
@@ -111,13 +111,13 @@ struct ContentView: View {
                     }) {
                         Text("Sign in ")
                             .bold()
-                            .foregroundColor(.black)
+                            .foregroundColor((!email.isEmpty && !pass.isEmpty) ? .black : .gray)
                             .frame(width: 358, height: 44)
-                            .background(.yellow)
+                            .background((!email.isEmpty && !pass.isEmpty) ? Color.yellow : Color.white.opacity(0.8))
                             .cornerRadius(8)
                             .padding(.bottom, 70)
                     }
-                    .disabled(isLoading)
+                    .disabled(isLoading || email.isEmpty || pass.isEmpty)
 
                     if isLoading {
                         ProgressView()
@@ -125,8 +125,9 @@ struct ContentView: View {
                             .padding(.top, 20)
                     }
                 }
+                .keyboardAvoiding()
                 .navigationDestination(isPresented: $isLoggedIn) {
-                    SecondView(isLoggedIn: $isLoggedIn, email: $email, pass: $pass) // تمرير email و pass
+                    SecondView(isLoggedIn: $isLoggedIn, email: $email, pass: $pass)
                 }
             }
         }

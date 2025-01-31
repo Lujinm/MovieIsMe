@@ -44,80 +44,108 @@ struct EditProfileView: View {
     var body: some View {
         NavigationStack {
             VStack {
-                // الصورة
-                Image(uiImage: selectedImage ?? defaultProfileImage)
-                    .resizable()
-                    .scaledToFill()
-                    .frame(width: 100, height: 100)
-                    .clipShape(Circle())
-                    .overlay(
+                ZStack {
+                    // صورة المستخدم مع الحدود الرمادية
+                    Image(uiImage: selectedImage ?? defaultProfileImage)
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: 78, height: 78)
+                        .clipShape(Circle())
+                        .overlay(
+                            Circle()
+                                .stroke(Color.gray.opacity(0.6), lineWidth: 2) // ✅ الحدود الرمادية دائمة
+                        )
+
+                    if isEditing {
+                        // طبقة شفافة رمادية فوق الصورة عند التعديل
                         Circle()
-                            .stroke(isEditing ? Color.yellow : Color.gray, lineWidth: 2)
-                    )
-                    .onTapGesture {
-                        if isEditing {
-                            showImagePicker = true
-                        }
+                            .fill(Color.white.opacity(0.4))
+                            .frame(width: 78, height: 78)
+
+                        // أيقونة الكاميرا الصفراء
+                        Image(systemName: "camera")
+                            .foregroundColor(.yellow)
+                            .font(.system(size: 20))
                     }
+                }
+                .padding(.vertical, 40.0)
+                .onTapGesture {
+                    if isEditing {
+                        showImagePicker = true
+                    }
+                }
 
                 VStack(alignment: .leading, spacing: 0) {
                     HStack {
                         Text("First name")
                             .foregroundColor(.white)
                             .padding(.leading)
+                        
+                        TextField("First name", text: $firstName)
+                            .padding()
+                            .cornerRadius(8)
+                            .padding(.horizontal)
+                            .disabled(!isEditing)
                     }
-                    .frame(height: 40)
-                    TextField("First name", text: $firstName)
-                        .padding()
-                        .background(Color.gray.opacity(0.2))
-                        .cornerRadius(8)
-                        .padding(.horizontal)
-                        .disabled(!isEditing) // منع التعديل إذا لم يكن وضع التحرير مفعلًا
-
+                    
                     Divider()
 
                     HStack {
                         Text("Last name")
                             .foregroundColor(.white)
                             .padding(.leading)
+                        
+                        TextField("Last name", text: $lastName)
+                            .padding()
+                            .cornerRadius(8)
+                            .padding(.horizontal)
+                            .disabled(!isEditing)
                     }
-                    .frame(height: 40)
-                    TextField("Last name", text: $lastName)
-                        .padding()
-                        .background(Color.gray.opacity(0.2))
-                        .cornerRadius(8)
-                        .padding(.horizontal)
-                        .disabled(!isEditing) // منع التعديل إذا لم يكن وضع التحرير مفعلًا
                 }
-                .frame(width: 358, height: 200)
+                .frame(width: 358, height: 97)
                 .background(Color.gray.opacity(0.2))
                 .cornerRadius(8)
-                .padding(.top, 20)
 
                 Spacer()
 
-                Button(action: {
-                    UserDefaults.standard.removeObject(forKey: "userId")
-                    UserDefaults.standard.removeObject(forKey: "userProfileImage") // حذف الصورة المحفوظة
-                    email = ""
-                    pass = ""
-                    isLoggedIn = false
-                    
-                    presentationMode.wrappedValue.dismiss()
-                }) {
-                    Text("Sign Out")
-                        .bold()
-                        .foregroundColor(.white)
-                        .frame(width: 358, height: 44)
-                        .background(Color.red)
-                        .cornerRadius(8)
+                if !isEditing {
+                    Button(action: {
+                        UserDefaults.standard.removeObject(forKey: "userId")
+                        UserDefaults.standard.removeObject(forKey: "userProfileImage")
+                        email = ""
+                        pass = ""
+                        isLoggedIn = false
+                        
+                        presentationMode.wrappedValue.dismiss()
+                    }) {
+                        Text("Sign Out")
+                            .bold()
+                            .foregroundColor(.red)
+                            .frame(width: 358, height: 44)
+                            .background(Color.gray.opacity(0.2))
+                            .cornerRadius(8)
+                    }
+                    .padding(.bottom, 20)
                 }
-                .padding(.bottom, 20)
-                
             }
             .navigationTitle(isEditing ? "Edit Profile" : "Profile Info")
             .navigationBarTitleDisplayMode(.inline)
+            .navigationBarBackButtonHidden(true) // إخفاء السهم القديم
             .toolbar {
+                // تخصيص زر العودة
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button(action: {
+                        presentationMode.wrappedValue.dismiss()
+                    }) {
+                        HStack{
+                            Image(systemName: "chevron.left") // السهم الافتراضي
+                                .foregroundColor(.yellow) // تغيير اللون إلى أصفر
+                            Text("Back")
+                                .foregroundColor(.yellow)
+                        }
+                    }
+                }
+                // زر "Save" أو "Edit" على اليمين
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(action: {
                         if isEditing {
