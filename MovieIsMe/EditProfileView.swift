@@ -45,7 +45,7 @@ struct EditProfileView: View {
         NavigationStack {
             VStack {
                 ZStack {
-                    // صورة المستخدم مع الحدود الرمادية
+                
                     Image(uiImage: selectedImage ?? defaultProfileImage)
                         .resizable()
                         .scaledToFill()
@@ -53,16 +53,14 @@ struct EditProfileView: View {
                         .clipShape(Circle())
                         .overlay(
                             Circle()
-                                .stroke(Color.gray.opacity(0.6), lineWidth: 2) // ✅ الحدود الرمادية دائمة
+                                .stroke(Color.gray.opacity(0.6), lineWidth: 2)
                         )
 
                     if isEditing {
-                        // طبقة شفافة رمادية فوق الصورة عند التعديل
                         Circle()
                             .fill(Color.white.opacity(0.4))
                             .frame(width: 78, height: 78)
 
-                        // أيقونة الكاميرا الصفراء
                         Image(systemName: "camera")
                             .foregroundColor(.yellow)
                             .font(.system(size: 20))
@@ -86,6 +84,7 @@ struct EditProfileView: View {
                             .cornerRadius(8)
                             .padding(.horizontal)
                             .disabled(!isEditing)
+                            .accentColor(.yellow)
                     }
                     
                     Divider()
@@ -100,6 +99,7 @@ struct EditProfileView: View {
                             .cornerRadius(8)
                             .padding(.horizontal)
                             .disabled(!isEditing)
+                            .accentColor(.yellow)
                     }
                 }
                 .frame(width: 358, height: 97)
@@ -130,22 +130,20 @@ struct EditProfileView: View {
             }
             .navigationTitle(isEditing ? "Edit Profile" : "Profile Info")
             .navigationBarTitleDisplayMode(.inline)
-            .navigationBarBackButtonHidden(true) // إخفاء السهم القديم
+            .navigationBarBackButtonHidden(true)
             .toolbar {
-                // تخصيص زر العودة
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button(action: {
                         presentationMode.wrappedValue.dismiss()
                     }) {
                         HStack{
-                            Image(systemName: "chevron.left") // السهم الافتراضي
-                                .foregroundColor(.yellow) // تغيير اللون إلى أصفر
+                            Image(systemName: "chevron.left")
+                                .foregroundColor(.yellow)
                             Text("Back")
                                 .foregroundColor(.yellow)
                         }
                     }
                 }
-                // زر "Save" أو "Edit" على اليمين
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(action: {
                         if isEditing {

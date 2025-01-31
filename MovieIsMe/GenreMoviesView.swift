@@ -67,5 +67,5 @@ struct GenreMoviesView: View {
 }
 
 #Preview {
-    GenreMoviesView(genre: "Action") // هنا قمت بتمرير قيمة للمعامل genre
+    GenreMoviesView(genre: "Action")
 }

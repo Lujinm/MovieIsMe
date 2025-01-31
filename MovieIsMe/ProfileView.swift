@@ -22,6 +22,7 @@ struct ProfileView: View {
     @State private var profileImage: UIImage? = nil
     @Binding var email: String
     @Binding var pass: String
+    @Environment(\.dismiss) private var dismiss
 
     let token = "Bearer pat7E88yW3dgzlY61.2b7d03863aca9f1262dcb772f7728bd157e695799b43c7392d5faf4f52fcb001"
 
@@ -105,21 +106,20 @@ struct ProfileView: View {
                 }
             }
             .navigationTitle("Profile")
-            .navigationBarBackButtonHidden(true) // إخفاء السهم القديم
+            .navigationBarBackButtonHidden(true)
             .foregroundColor(.white)
             .onAppear {
                 fetchUserData()
                 fetchBookmarkedMovies()
             }
             .toolbar {
-                // تخصيص زر العودة
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button(action: {
-                        // الرجوع
+                        dismiss()
                     }) {
                         HStack{
-                            Image(systemName: "chevron.left") // السهم الافتراضي
-                                .foregroundColor(.yellow) // تغيير اللون إلى أصفر
+                            Image(systemName: "chevron.left")
+                                .foregroundColor(.yellow)
                             Text("Back")
                                 .foregroundColor(.yellow)
                         }

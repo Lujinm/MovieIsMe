@@ -14,6 +14,7 @@ struct DetailsView: View {
     @State private var reviews: [Review] = []
     @State private var isLoading: Bool = false
     @State private var errorMessage: String? = nil
+    @Environment(\.dismiss) private var dismiss
 
     let token = "Bearer pat7E88yW3dgzlY61.2b7d03863aca9f1262dcb772f7728bd157e695799b43c7392d5faf4f52fcb001"
 
@@ -29,8 +30,8 @@ struct DetailsView: View {
                 }
                 .frame(height: 400)
                 .cornerRadius(10)
-
-//                 Movie Title
+                
+                //Movie Title
                 Text(movie.fields.name)
                     .font(.largeTitle)
                     .bold()
@@ -39,13 +40,13 @@ struct DetailsView: View {
                         Text("Duration")
                             .font(.headline)
                         Text("\(movie.fields.runtime)")
-                            .foregroundColor(.gray)}
+                        .foregroundColor(.gray)}
                     Spacer()
                     VStack{
                         Text("Language")
                             .font(.headline)
                         Text(" \(movie.fields.language.joined(separator: ", "))")
-                        .foregroundColor(.gray)
+                            .foregroundColor(.gray)
                     }
                 }
                 HStack {
@@ -60,7 +61,7 @@ struct DetailsView: View {
                         Text("Age")
                             .font(.headline)
                         Text(" \(movie.fields.rating)")
-                        .foregroundColor(.gray)
+                            .foregroundColor(.gray)
                     }
                 }
                 
@@ -70,25 +71,25 @@ struct DetailsView: View {
                     .font(.headline)
                 Text(movie.fields.story)
                     .foregroundColor(.gray)
-
-     
-
+                
+                
+                
                 // IMDb Rating
                 VStack{
                     Text("IMDb Rating")
                         .font(.headline)
                     Text("\(String(format: "%.1f", movie.fields.IMDb_rating)) /10")
-                    .foregroundColor(.gray)
+                        .foregroundColor(.gray)
                 }
                 Divider()
                     .padding(.vertical)
-               
-
+                
+                
                 // Directors Section
                 Text("Director")
                     .font(.title2)
                     .bold()
-
+                
                 if !directors.isEmpty {
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 16) {
@@ -102,7 +103,7 @@ struct DetailsView: View {
                                     }
                                     .frame(width: 80, height: 80)
                                     .clipShape(Circle())
-
+                                    
                                     Text(director.fields.name)
                                         .font(.caption)
                                         .multilineTextAlignment(.center)
@@ -115,13 +116,13 @@ struct DetailsView: View {
                         .font(.caption)
                         .foregroundColor(.gray)
                 }
-
-
+                
+                
                 // Actors Section
                 Text("Stars")
                     .font(.title2)
                     .bold()
-
+                
                 if !actors.isEmpty {
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 16) {
@@ -135,7 +136,7 @@ struct DetailsView: View {
                                     }
                                     .frame(width: 80, height: 80)
                                     .clipShape(Circle())
-
+                                    
                                     Text(actor.fields.name)
                                         .font(.caption)
                                         .multilineTextAlignment(.center)
@@ -148,16 +149,16 @@ struct DetailsView: View {
                         .font(.caption)
                         .foregroundColor(.gray)
                 }
-
-                // Divider
+                
+                
                 Divider()
                     .padding(.vertical)
-
+                
                 // Reviews Section
                 Text("Rating & Reviews")
                     .font(.system(size: 18))
                     .bold()
-
+                
                 if !reviews.isEmpty {
                     VStack(alignment: .leading, spacing: 5) {
                         // Average Rating
@@ -168,8 +169,8 @@ struct DetailsView: View {
                         Text("Out of 5")
                             .font(.system(size: 15))
                             .foregroundColor(.gray)
-                           
-                        // Horizontal Scroll for Reviews
+                        
+               
                         ScrollView(.horizontal, showsIndicators: false) {
                             HStack(spacing: 16) {
                                 ForEach(reviews, id: \.id) { review in
@@ -188,15 +189,12 @@ struct DetailsView: View {
             }
             .padding()
         }
-//        .navigationTitle(movie.fields.name)
+        //.navigationTitle(movie.fields.name)
         .navigationBarBackButtonHidden(true)
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {
                 Button(action: {
-                    // تنفيذ العودة للخلف
-                    if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene {
-                        windowScene.windows.first?.rootViewController?.dismiss(animated: true, completion: nil)
-                    }
+                    dismiss()
                 }) {
                     Image(systemName: "arrow.left")
                         .foregroundColor(.yellow)
@@ -351,7 +349,7 @@ struct DetailsView: View {
 // MARK: - Review Row View
 struct ReviewRow: View {
     let review: Review
-
+    
     var body: some View {
         ZStack(alignment: .topLeading) {
             VStack(alignment: .leading, spacing: 8) {
@@ -381,8 +379,8 @@ struct ReviewRow: View {
                         }
                     }
                 }
-               
-
+                
+                
                 // Review Text
                 Text(review.fields.review_text)
                     .font(.system(size: 13))
@@ -404,16 +402,18 @@ struct ReviewRow: View {
             .cornerRadius(8)
         }
     }
-
+    
     private func formatDate(_ dateString: String) -> String {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
         
         if let date = dateFormatter.date(from: dateString) {
-            dateFormatter.dateFormat = "MMMM d, yyyy"
-            return dateFormatter.string(from: date)
+            let outputFormatter = DateFormatter()
+            outputFormatter.dateFormat = "MMMM d, yyyy"
+            outputFormatter.locale = Locale(identifier: "en_US") // Ensure consistency
+            return outputFormatter.string(from: date)
         }
-        return dateString
+        return dateString // Return original if formatting fails
     }
 }
 // MARK: - Data Models
