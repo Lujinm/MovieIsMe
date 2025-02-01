@@ -134,14 +134,61 @@ struct SecondView: View {
             TabView(selection: $currentPage) {
                 ForEach(topRatedMovies.indices, id: \.self) { index in
                     NavigationLink(destination: DetailsView(movie: topRatedMovies[index])) {
-                        AsyncImage(url: URL(string: topRatedMovies[index].fields.poster)) { image in
-                            image.resizable()
-                                .scaledToFill()
-                        } placeholder: {
-                            ProgressView()
+                        ZStack(alignment: .bottomLeading) {
+                            AsyncImage(url: URL(string: topRatedMovies[index].fields.poster)) { image in
+                                image.resizable()
+                                    .scaledToFill()
+                            } placeholder: {
+                                ProgressView()
+                            }
+                            .frame(width: 355, height: 429)
+                            .cornerRadius(10)
+
+                            
+                        
+                            VStack(alignment: .leading, spacing: 8) {
+                                
+                                Text(topRatedMovies[index].fields.name)
+                                    .font(.system(size: 28, weight: .bold))
+                                    .foregroundColor(.white)
+
+                            
+                                HStack(spacing: 4) {
+                                    ForEach(0..<5, id: \.self) { starIndex in
+                                        Image(systemName: starIndex < Int(topRatedMovies[index].fields.IMDb_rating) ? "star.fill" : "star")
+                                            .foregroundColor(.yellow)
+                                            .frame(width: 7, height: 9)
+                                            .font(.system(size: 7.95))
+                                    }
+                                }
+
+                            
+                                HStack(alignment: .bottom, spacing: 4) {
+                                    Text(String(format: "%.1f", topRatedMovies[index].fields.IMDb_rating))
+                                        .font(.system(size: 20, weight: .bold))
+                                        .foregroundColor(.white)
+                                    Text("out of 10")
+                                        .font(.system(size: 12))
+                                        .foregroundColor(.white.opacity(0.8))
+                                        .bold()
+                                        .padding(.bottom, 4)
+                                }
+
+                            
+                                HStack(spacing: 8) {
+                                    Text(topRatedMovies[index].fields.genre.joined(separator: ", "))
+                                        .font(.system(size: 12))
+                                        .foregroundColor(.white)
+                                    Text(".")
+                                        .font(.system(size: 12))
+                                        .foregroundColor(.white)
+                                    Text(topRatedMovies[index].fields.runtime)
+                                        .font(.system(size: 12))
+                                        .foregroundColor(.white)
+                                }
+                            }
+                            .padding(16)
                         }
-                        .frame(width: 355, height: 429)
-                        .cornerRadius(10)
                     }
                     .tag(index)
                 }
@@ -149,6 +196,7 @@ struct SecondView: View {
             .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
             .frame(height: 429)
 
+            
             HStack(spacing: 8) {
                 ForEach(topRatedMovies.indices, id: \.self) { index in
                     let distance = abs(index - currentPage)
